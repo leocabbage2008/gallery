@@ -6,6 +6,9 @@ app = Flask(__name__)
 # Specify the absolute path to the folder containing your external images
 external_folder_path = "/Users/coder/saves"  # Replace with your actual path
 
+@app.route("/")
+def home():
+	return "parked"
 
 @app.route("/images/<filename>")
 def serve_image(filename):
