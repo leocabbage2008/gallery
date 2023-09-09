@@ -1,5 +1,9 @@
 .image-container {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
   align-content: center;
+}
+
+.image-container .image {
+  border: thick double #32a1ce;
 }
