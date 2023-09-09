@@ -1,11 +1,17 @@
 .image-container {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  align-content: center;
 }
 
 .image-container .image {
   border: thick double #32a1ce;
+  background: rgba(0, 0, 0, 0.6);
+  display: grid;
+  align-content: center;
+}
+
+.image a {
+  height: 100%;
 }
 
 .image img {
