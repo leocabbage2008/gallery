@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Image Gallery</title>
+    <link rel="stylesheet" href="/static/assets/css/image_gallery.css" />
+  </head>
+  <body>
+    <h1>Image Gallery</h1>
+    <div class="image-container">
+      {% for image_file in image_files %}
+      <img src="{{ url_for('serve_image', filename=image_file) }}" />
+      {% endfor %}
+    </div>
+  </body>
+</html>
