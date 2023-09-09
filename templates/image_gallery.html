@@ -3,9 +3,29 @@
   <head>
     <title>Image Gallery</title>
     <link rel="stylesheet" href="/static/css/image_gallery.css" />
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        // const images = document.getElementById('imageToCopy');
+        const images = document.querySelectorAll('img');
+        images.forEach(function (image) {
+          image.addEventListener('contextmenu', function (event) {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = image.width;
+            canvas.height = image.height;
+            ctx.drawImage(image, 0, 0);
+            canvas.toBlob(function (blob) {
+              const item = new ClipboardItem({ 'image/png': blob });
+              navigator.clipboard.write([item]);
+            }, 'image/png');
+            event.preventDefault();
+          });
+        });
+      });
+    </script>
   </head>
   <body>
-    <h1>Image Gallery</h1>
+    <h1>Image Gallery(left click to download, right to copy)</h1>
     <div class="image-container">
       {% for image_file in image_files %}
       <div class="image">
