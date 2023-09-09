@@ -1,4 +1,4 @@
-name: ${{ github.actor }} is learning GitHub Actions
+name: amongi
 
 on:
   workflow_dispatch:
