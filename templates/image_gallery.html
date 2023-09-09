@@ -2,14 +2,18 @@
 <html>
   <head>
     <title>Image Gallery</title>
-    <link rel="stylesheet" href="/static/assets/css/image_gallery.css" />
+    <link rel="stylesheet" href="/static/css/image_gallery.css" />
   </head>
   <body>
     <h1>Image Gallery</h1>
     <div class="image-container">
       {% for image_file in image_files %}
       <div class="image">
-        <a href="{{url_for('serve_image', filename=image_file)}}" download>
+        <a
+          href="{{url_for('serve_image', filename=image_file)}}"
+          onclick="e.preventDefault()"
+          download
+        >
           <img src="{{ url_for('serve_image', filename=image_file) }}" />
         </a>
       </div>
