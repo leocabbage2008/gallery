@@ -1,10 +1,12 @@
 from flask import Flask, render_template, send_from_directory
-import os
+import os, shutil
 
 app = Flask(__name__)
 
 # Specify the absolute path to the folder containing your external images
-external_folder_path = "/Users/coder/saves"  # Replace with your actual path
+try:
+	shutil.copytree("/Users/coder/saves","./saves",dirs_exist_ok=True)
+finally: saves = "./saves" 
 
 @app.route("/")
 def home():
@@ -12,27 +14,20 @@ def home():
 
 @app.route("/images/<filename>")
 def serve_image(filename):
-    # Construct the absolute path to the image file
-    image_path = os.path.join(external_folder_path, filename)
-
-    # Check if the file exists
-    if not os.path.exists(image_path):
+    path = os.path.join(saves, filename)
+    if not os.path.exists(path):
         return "Image not found."
-
-    # Serve the image file
-    return send_from_directory(external_folder_path, filename)
+    return send_from_directory(saves, filename)
 
 
 @app.route("/image_gallery")
 def image_gallery():
-    # List of image filenames in the external folder
-    image_files = [
-        f
-        for f in os.listdir(external_folder_path)
-        if f.endswith((".jpg", ".png", ".gif"))
+	images = [
+        (f,f.split('.')[1])
+        for f in os.listdir(saves)
+		if os.path.isfile(os.path.join(saves, f))
     ]
-
-    return render_template("image_gallery.html", image_files=image_files)
+	return render_template("image_gallery.html", images=images)
 
 
 @app.route("/read/<text>")

@@ -1,19 +1,33 @@
-.image-container {
+.media-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
 }
 
-.image-container .image {
+.media-grid .media-container {
   border: thick double #32a1ce;
   background: rgba(0, 0, 0, 0.6);
-  display: grid;
+  display: flex;
+  flex-direction: column;
   align-content: center;
+  max-height: 763px;
+  overflow: scroll;
 }
 
-.image a {
+.media-grid .media-container::-webkit-scrollbar {
+  display: none;
+}
+
+.media-container .title {
+  text-align: center;
+  background-color: black;
+  color: white;
+  padding: 5px 0px;
+}
+
+.media-container a {
   height: 100%;
 }
 
-.image img {
+.media-container img {
   width: 100%;
 }

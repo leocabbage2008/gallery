@@ -4,40 +4,40 @@
     <title>Image Gallery</title>
     <link rel="stylesheet" href="/static/css/image_gallery.css" />
     <script>
-      document.addEventListener('DOMContentLoaded', function () {
-        // const images = document.getElementById('imageToCopy');
+      document.addEventListener('DOMContentLoaded', () => {
         const images = document.querySelectorAll('img');
         images.forEach(function (image) {
-          image.addEventListener('contextmenu', function (event) {
+          image.addEventListener('contextmenu', (e) => {
             const canvas = document.createElement('canvas');
             const ctx = canvas.getContext('2d');
             canvas.width = image.width;
             canvas.height = image.height;
             ctx.drawImage(image, 0, 0);
-            canvas.toBlob(function (blob) {
-              const item = new ClipboardItem({ 'image/png': blob });
+            canvas.toBlob((b) => {
+              const item = new ClipboardItem({ 'image/png': b });
               navigator.clipboard.write([item]);
             }, 'image/png');
-            event.preventDefault();
+            e.preventDefault();
           });
         });
       });
     </script>
   </head>
   <body>
-    <h1>Image Gallery(left click to download, right to copy)</h1>
-    <div class="image-container">
-      {% for image_file in image_files %}
-      <div class="image">
+    <h1>Image Gallery(left click to download, right to copy, scrollable)</h1>
+    <div class="media-grid">
+      {% for (image,type) in images %} {%if type in 'gifjpgjpegwebp' %}
+      <div class="media-container">
+        <div class="title">{{image}}</div>
         <a
-          href="{{url_for('serve_image', filename=image_file)}}"
+          href="{{url_for('serve_image', filename=image)}}"
           onclick="e.preventDefault()"
           download
         >
-          <img src="{{ url_for('serve_image', filename=image_file) }}" />
+          <img src="{{ url_for('serve_image', filename=image) }}" />
         </a>
       </div>
-      {% endfor %}
+      {%endif%} {% endfor %}
     </div>
   </body>
 </html>
