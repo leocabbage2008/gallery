@@ -22,9 +22,120 @@
         });
       });
     </script>
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        let counter = document.getElementById('counter');
+        let checkbox = document.getElementById('checkbox');
+        let mediaGrid = document.getElementsByClassName('media-grid')[0];
+        let mediaContainer = document.getElementsByClassName('media-container');
+        const handleCheckbox = () => {
+          if (checkbox.checked) {
+            slider.disabled = 'disabled';
+            counter.disabled = 'disabled';
+            mediaGrid.style.gridTemplateColumns = '';
+            for (let container of mediaContainer) {
+              container.style.maxHeight = '';
+            }
+            mediaGrid.classList.add('dynamic');
+          } else {
+            slider.removeAttribute('disabled');
+            counter.removeAttribute('disabled');
+            update();
+            mediaGrid.classList.remove('dynamic');
+          }
+        };
+        handleCheckbox();
+        checkbox.addEventListener('input', handleCheckbox);
+        const update = () => {
+          mediaGrid.style.gridTemplateColumns = `repeat(${slider.value},1fr)`;
+          for (let container of mediaContainer) {
+            container.style.maxHeight = `${
+              (763 * 4) / 3 / (parseInt(counter.value) - 2)
+            }px`;
+          }
+        };
+        slider.addEventListener('input', () => {
+          counter.value = slider.value;
+          update();
+        });
+        counter.addEventListener('input', () => {
+          slider.value = counter.value;
+          update();
+        });
+      });
+    </script>
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        let alignSelf = document.getElementById('align-self');
+        let mediaGrid = document.getElementsByClassName('media-grid')[0];
+        let mediaContainer = document.getElementsByClassName('media-container');
+        alignSelf.addEventListener('input', () => {
+          if (alignSelf.checked) {
+            for (let container of mediaContainer) {
+              container.classList.add('align-self-center');
+            }
+          } else {
+            for (let container of mediaContainer) {
+              container.classList.remove('align-self-center');
+            }
+          }
+        });
+      });
+    </script>
+    <script>
+      const addCSS = (css) =>
+        (document.head.appendChild(document.createElement('style')).innerHTML =
+          css);
+      document.addEventListener('DOMContentLoaded', () => {
+        let peek = document.getElementById('peek');
+        const handleState = () => {
+          if (peek.checked) {
+            let copy = document.createElement('img');
+            copy.classList.add('peek');
+            document.body.insertBefore(copy, document.body.firstChild);
+            document.onmousemove = (e) => {
+              mouser = document.elementFromPoint(e.clientX, e.clientY);
+              if (mouser.nodeName == 'IMG') {
+                copy.src = mouser.src;
+                // copy.style.top = e.pageY;
+                // copy.style.left = e.pageX;
+                copy.style.top = e.pageY - 100 + 'px';
+                copy.style.left = e.pageX + 'px';
+                console.log(copy);
+              } else {
+                copy.visibility;
+              }
+            };
+          } else {
+            document.onmousemove = () => {};
+          }
+        };
+        handleState();
+        peek.addEventListener('input', handleState);
+      });
+    </script>
   </head>
   <body>
     <h1>Image Gallery(left click to download, right to copy, scrollable)</h1>
+    <div class="row">
+      <div class="grid">
+        <h3 class="hr">Grid:</h3>
+        dynamic:<input id="checkbox" type="checkbox" checked />
+        <br />
+        <input id="slider" type="range" min="1" max="20" value="3" />
+        <input id="counter" type="number" min="1" max="20" value="3" />
+      </div>
+      <div class="grid">
+        <h3 class="hr">Align-self:</h3>
+        .media-grid .media-container:<input id="align-self" type="checkbox" />
+        <br />
+      </div>
+      <div class="grid">
+        <h3 class="hr">Hover Peek:</h3>
+        State:<input id="peek" type="checkbox" checked />
+        <br />
+      </div>
+    </div>
     <div class="media-grid">
       {% for (image,type) in images %} {%if type in 'gifjpgjpegwebp' %}
       <div class="media-container">
