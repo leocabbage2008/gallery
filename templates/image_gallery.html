@@ -24,48 +24,6 @@
     </script>
     <script>
       document.addEventListener('DOMContentLoaded', () => {
-        let counter = document.getElementById('counter');
-        let checkbox = document.getElementById('checkbox');
-        let mediaGrid = document.getElementsByClassName('media-grid')[0];
-        let mediaContainer = document.getElementsByClassName('media-container');
-        const handleCheckbox = () => {
-          if (checkbox.checked) {
-            slider.disabled = 'disabled';
-            counter.disabled = 'disabled';
-            mediaGrid.style.gridTemplateColumns = '';
-            for (let container of mediaContainer) {
-              container.style.maxHeight = '';
-            }
-            mediaGrid.classList.add('dynamic');
-          } else {
-            slider.removeAttribute('disabled');
-            counter.removeAttribute('disabled');
-            update();
-            mediaGrid.classList.remove('dynamic');
-          }
-        };
-        handleCheckbox();
-        checkbox.addEventListener('input', handleCheckbox);
-        const update = () => {
-          mediaGrid.style.gridTemplateColumns = `repeat(${slider.value},1fr)`;
-          for (let container of mediaContainer) {
-            container.style.maxHeight = `${
-              (763 * 4) / 3 / (parseInt(counter.value) - 2)
-            }px`;
-          }
-        };
-        slider.addEventListener('input', () => {
-          counter.value = slider.value;
-          update();
-        });
-        counter.addEventListener('input', () => {
-          slider.value = counter.value;
-          update();
-        });
-      });
-    </script>
-    <script>
-      document.addEventListener('DOMContentLoaded', () => {
         let alignSelf = document.getElementById('align-self');
         let mediaGrid = document.getElementsByClassName('media-grid')[0];
         let mediaContainer = document.getElementsByClassName('media-container');
@@ -87,29 +45,107 @@
         (document.head.appendChild(document.createElement('style')).innerHTML =
           css);
       document.addEventListener('DOMContentLoaded', () => {
+        let mediaGrid = document.getElementsByClassName('media-grid')[0];
+        let mediaContainer = document.getElementsByClassName('media-container');
         let peek = document.getElementById('peek');
+        let autoPeek = document.getElementById('auto-peek');
+        let slider = document.getElementById('slider');
+        let counter = document.getElementById('counter');
+        let checkbox = document.getElementById('checkbox');
+        let forcestop = false;
+        const getWidth = () => {
+          return Math.max(
+            document.body.scrollWidth,
+            document.documentElement.scrollWidth,
+            document.body.offsetWidth,
+            document.documentElement.offsetWidth,
+            document.documentElement.clientWidth
+          );
+        };
+        const getHeight = () => {
+          return Math.max(
+            document.body.scrollHeight,
+            document.documentElement.scrollHeight,
+            document.body.offsetHeight,
+            document.documentElement.offsetHeight,
+            document.documentElement.clientHeight
+          );
+        };
+        const update = () => {
+          mediaGrid.style.gridTemplateColumns = `repeat(${slider.value},1fr)`;
+          for (let container of mediaContainer) {
+            container.style.maxHeight = `${
+              (763 * 2) / (parseInt(counter.value) - 2)
+            }px`;
+            if (slider.value >= 7 && autoPeek.checked) {
+              hoverPeek();
+              peek.checked = true;
+            } else {
+              forcestop = true;
+              forcestop = false;
+              peek.checked = false;
+            }
+          }
+        };
+        const handleCheckbox = () => {
+          if (checkbox.checked) {
+            slider.disabled = 'disabled';
+            counter.disabled = 'disabled';
+            mediaGrid.style.gridTemplateColumns = '';
+            for (let container of mediaContainer) {
+              container.style.maxHeight = '';
+            }
+            mediaGrid.classList.add('dynamic');
+          } else {
+            slider.removeAttribute('disabled');
+            counter.removeAttribute('disabled');
+            update();
+            mediaGrid.classList.remove('dynamic');
+          }
+        };
+        const hoverPeek = () => {
+          let copy = document.createElement('img');
+          copy.classList.add('peek');
+          document.onmousemove = (e) => {
+            mouser = document.elementFromPoint(e.clientX, e.clientY);
+            if (mouser.nodeName == 'IMG' && !forcestop) {
+              if (document.getElementsByClassName('peek').length == 0)
+                document.body.insertBefore(copy, document.body.firstChild);
+              copy.src = mouser.src;
+              let overHalfX = getWidth() / 2 > e.pageX ? 0 : -1;
+              let overHalfY = getHeight() / 2 > e.pageY ? 1 : -1;
+              copy.style.top =
+                e.pageY -
+                copy.height / 2 +
+                (overHalfY * copy.height) / 2 +
+                'px';
+              copy.style.left =
+                e.pageX +
+                overHalfX * copy.width +
+                (overHalfX == 0 ? 15 : -15) +
+                'px';
+            } else {
+              copy.remove();
+            }
+          };
+        };
         const handleState = () => {
           if (peek.checked) {
-            let copy = document.createElement('img');
-            copy.classList.add('peek');
-            document.body.insertBefore(copy, document.body.firstChild);
-            document.onmousemove = (e) => {
-              mouser = document.elementFromPoint(e.clientX, e.clientY);
-              if (mouser.nodeName == 'IMG') {
-                copy.src = mouser.src;
-                // copy.style.top = e.pageY;
-                // copy.style.left = e.pageX;
-                copy.style.top = e.pageY - 100 + 'px';
-                copy.style.left = e.pageX + 'px';
-                console.log(copy);
-              } else {
-                copy.visibility;
-              }
-            };
+            hoverPeek();
           } else {
             document.onmousemove = () => {};
           }
         };
+        handleCheckbox();
+        checkbox.addEventListener('input', handleCheckbox);
+        slider.addEventListener('input', () => {
+          counter.value = slider.value;
+          update();
+        });
+        counter.addEventListener('input', () => {
+          slider.value = counter.value;
+          update();
+        });
         handleState();
         peek.addEventListener('input', handleState);
       });
@@ -132,7 +168,8 @@
       </div>
       <div class="grid">
         <h3 class="hr">Hover Peek:</h3>
-        State:<input id="peek" type="checkbox" checked />
+        Auto State:<input id="auto-peek" type="checkbox" checked /> <br />
+        State:<input id="peek" type="checkbox" />
         <br />
       </div>
     </div>

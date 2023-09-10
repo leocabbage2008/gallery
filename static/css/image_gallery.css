@@ -45,7 +45,7 @@ body {
   background: rgba(0, 0, 0, 0.6);
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  /* justify-content: center; */
   max-height: 763px;
   overflow: scroll;
 }
@@ -62,8 +62,6 @@ body {
   text-align: center;
   background-color: black;
   color: white;
-  padding: 5px 0px;
-  /* overflow-x: scroll; */
 }
 
 .media-container a {
@@ -76,6 +74,6 @@ body {
 
 .peek {
   position: absolute;
-  height: 100px;
+  height: 40%;
   width: auto;
 }
