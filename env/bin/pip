@@ -1,4 +1,4 @@
-#!/Users/coder/codez/projects/leocabbage2008.github.io/gallery/bin/python
+#!/Users/coder/codez/projects/leocabbage2008.github.io/env/bin/python3.11
 # -*- coding: utf-8 -*-
 import re
 import sys

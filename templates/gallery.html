@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Image Gallery</title>
+    <link rel="stylesheet" href="/static/css/gallery.css" />
+    <!-- right click copy. no setinterval because copy at full res no matter what. -->
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const images = document.querySelectorAll('img');
+        images.forEach((image) => {
+          image.addEventListener('contextmenu', (e) => {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            let img = new Image();
+            img.src = image.src;
+            img.width = image.naturalWidth;
+            img.height = image.naturalHeight;
+            canvas.width = img.width;
+            canvas.height = img.height;
+            ctx.drawImage(img, 0, 0);
+            canvas.toBlob((b) => {
+              const item = new ClipboardItem({ 'image/png': b });
+              navigator.clipboard.write([item]);
+            }, 'image/png');
+            e.preventDefault();
+          });
+        });
+      });
+    </script>
+    <!-- align self center -->
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        let alignSelf = document.getElementById('align-self');
+        let mediaGrid = document.getElementsByClassName('media-grid')[0];
+        let mediaContainer = document.getElementsByClassName('media-container');
+        alignSelf.addEventListener('input', () => {
+          if (alignSelf.checked) {
+            for (let container of mediaContainer) {
+              container.classList.add('align-self-center');
+            }
+          } else {
+            for (let container of mediaContainer) {
+              container.classList.remove('align-self-center');
+            }
+          }
+        });
+      });
+    </script>
+    <!-- auto peek and dynamics -->
+    <!-- on slider change, will update columns and will check if auto peek is needed -->
+    <!-- update is triggered by slider changes and can also be triggered by clicking auto peek auto states -->
+    <!-- auto state will update so that update can clean up hovered elements -->
+    <script>
+      const addCSS = (css) =>
+        (document.head.appendChild(document.createElement('style')).innerHTML =
+          css);
+      document.addEventListener('DOMContentLoaded', () => {
+        let mediaGrid = document.getElementsByClassName('media-grid')[0];
+        let mediaContainer = document.getElementsByClassName('media-container');
+        let peek = document.getElementById('peek');
+        let autoPeek = document.getElementById('auto-peek');
+        let slider = document.getElementById('slider');
+        let counter = document.getElementById('counter');
+        let checkbox = document.getElementById('checkbox');
+        let forcestop = false;
+        const getWidth = () => {
+          return Math.max(
+            document.body.scrollWidth,
+            document.documentElement.scrollWidth,
+            document.body.offsetWidth,
+            document.documentElement.offsetWidth,
+            document.documentElement.clientWidth
+          );
+        };
+        const getHeight = () => {
+          return Math.max(
+            document.body.scrollHeight,
+            document.documentElement.scrollHeight,
+            document.body.offsetHeight,
+            document.documentElement.offsetHeight,
+            document.documentElement.clientHeight
+          );
+        };
+        const update = () => {
+          mediaGrid.style.gridTemplateColumns = `repeat(${slider.value},1fr)`;
+          for (let container of mediaContainer) {
+            container.style.maxHeight = `${
+              (763 * 2) / (parseInt(counter.value) - 2)
+            }px`;
+            if (slider.value >= 7 && autoPeek.checked) {
+              hoverPeek();
+              peek.checked = true;
+            } else {
+              forcestop = true;
+              forcestop = false;
+              peek.checked = false;
+            }
+          }
+        };
+        const handleCheckbox = () => {
+          if (checkbox.checked) {
+            slider.disabled = 'disabled';
+            counter.disabled = 'disabled';
+            mediaGrid.style.gridTemplateColumns = '';
+            for (let container of mediaContainer) {
+              container.style.maxHeight = '';
+            }
+            mediaGrid.classList.add('dynamic');
+          } else {
+            update();
+            slider.removeAttribute('disabled');
+            counter.removeAttribute('disabled');
+            mediaGrid.classList.remove('dynamic');
+          }
+        };
+        const hoverPeek = () => {
+          let copyimg = document.createElement('img');
+          let copyvid = document.createElement('vid');
+          copyimg.classList.add('peek');
+          copyvid.classList.add('peek');
+          document.onmousemove = (e) => {
+            mouser = document.elementFromPoint(e.clientX, e.clientY);
+            if (
+              (mouser.nodeName == 'IMG' || mouser.nodeName == 'VIDEO') &&
+              !forcestop
+            ) {
+              if (document.getElementsByClassName('peek').length == 0)
+                document.body.insertBefore(copyimg, document.body.firstChild);
+              copyimg.src = mouser.src;
+              let overHalfX = getWidth() / 2 > e.pageX ? 0 : -1;
+              let overHalfY = getHeight() / 2 > e.pageY ? 1 : -1;
+              copyimg.style.top =
+                e.pageY -
+                copyimg.height / 2 +
+                (overHalfY * copyimg.height) / 2 +
+                'px';
+              copyimg.style.left =
+                e.pageX +
+                overHalfX * copyimg.width +
+                (overHalfX == 0 ? 15 : -15) +
+                'px';
+            } else {
+              copyimg.remove();
+            }
+          };
+        };
+        const handleState = () => {
+          if (peek.checked) {
+            hoverPeek();
+          } else {
+            document.onmousemove = () => {};
+          }
+        };
+        update();
+        handleCheckbox();
+        checkbox.addEventListener('input', handleCheckbox);
+        slider.addEventListener('input', () => {
+          counter.value = slider.value;
+          update();
+        });
+        counter.addEventListener('input', () => {
+          slider.value = counter.value;
+          update();
+        });
+        handleState();
+        peek.addEventListener('input', handleState);
+      });
+    </script>
+    <!-- lazy images -->
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        const lazyImages = document.querySelectorAll('.lazy');
+        const observer = new IntersectionObserver(function (entries, observer) {
+          entries.forEach(function (entry) {
+            if (entry.isIntersecting) {
+              const img = entry.target;
+              img.src = img.getAttribute('data-src');
+              img.classList.remove('lazy');
+              observer.unobserve(img);
+            }
+          });
+        });
+
+        lazyImages.forEach(function (img) {
+          observer.observe(img);
+        });
+      });
+    </script>
+  </head>
+  <body>
+    <h1>Image Gallery(left click to download, right to copy, scrollable)</h1>
+    <div class="row">
+      <div class="grid">
+        <h3 class="hr">Grid:</h3>
+        dynamic:<input id="checkbox" type="checkbox" checked />
+        <br />
+        <input id="slider" type="range" min="1" max="20" value="3" />
+        <input id="counter" type="number" min="1" max="20" value="3" />
+      </div>
+      <div class="grid">
+        <h3 class="hr">Align-self:</h3>
+        .media-grid .media-container:<input id="align-self" type="checkbox" />
+        <br />
+      </div>
+      <div class="grid">
+        <h3 class="hr">Hover Peek:</h3>
+        Auto State:<input id="auto-peek" type="checkbox" checked /> <br />
+        State:<input id="peek" type="checkbox" />
+        <br />
+      </div>
+    </div>
+    <div class="media-grid">
+      {% for (image,type,path) in images %}
+      <div class="media-container">
+        <div class="title">{{image}}</div>
+        {%if type in 'pnggifjpgjpegwebp' %}
+        <a
+          href="{{url_for('serve', filename=image, path=path)}}"
+          onclick="e.preventDefault()"
+          download
+        >
+          <img
+            class="lazy"
+            data-src="{{ url_for('serve', filename=image, path=path) }}"
+          />
+        </a>
+        {%else%}
+        <video
+          class="lazy"
+          data-src="{{ url_for('serve', filename=image, path=path) }}"
+          controls
+        ></video>
+        {%endif%}
+      </div>
+      {% endfor %}
+    </div>
+  </body>
+</html>
