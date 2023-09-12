@@ -55,6 +55,7 @@ jobs:
         with:
           name: python-app
           path: .
+          package: .
 
       - name: 'Deploy to Azure Web App'
         uses: azure/webapps-deploy@v2
