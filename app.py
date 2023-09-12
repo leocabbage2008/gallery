@@ -1,6 +1,7 @@
 from flask import Flask, render_template, send_from_directory, request
 from markupsafe import escape
-from flask_caching import Cache, CachedResponse
+
+# from flask_caching import Cache, CachedResponse
 import os, shutil
 
 config = {
@@ -9,8 +10,8 @@ config = {
     "CACHE_DEFAULT_TIMEOUT": 300,
 }
 app = Flask(__name__)
-app.config.from_mapping(config)
-cache = Cache(app)
+# app.config.from_mapping(config)
+# cache = Cache(app)
 
 try:
     shutil.copytree("/Users/coder/saves", "./static/saves", dirs_exist_ok=True)
@@ -41,7 +42,7 @@ def serve(filename):
 
 
 @app.route("/gallery")
-@cache.cached(timeout=300)
+# @cache.cached(timeout=300)
 def gallery():
     password = request.args.get("password")
     print(password)
