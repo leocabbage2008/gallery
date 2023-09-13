@@ -1,7 +1,6 @@
 from flask import Flask, render_template, send_from_directory, request
 from markupsafe import escape
 
-# from flask_caching import Cache, CachedResponse
 import os, shutil
 
 config = {
@@ -10,13 +9,12 @@ config = {
     "CACHE_DEFAULT_TIMEOUT": 300,
 }
 app = Flask(__name__)
-# app.config.from_mapping(config)
-# cache = Cache(app)
 
-try:
-    shutil.copytree("/Users/coder/saves", "./static/saves", dirs_exist_ok=True)
-finally:
-    saves = "./static/saves"
+# try:
+#     shutil.copytree("/Users/coder/saves", "./static/saves", dirs_exist_ok=True)
+# except:
+#     print("on virty pullin up with a hundre fitty")
+saves = "./static/saves"
 cats = "./static/cats"
 
 
