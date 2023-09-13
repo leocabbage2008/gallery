@@ -17,11 +17,7 @@ try:
     shutil.copytree("/Users/coder/saves", "./static/saves", dirs_exist_ok=True)
 finally:
     saves = "./static/saves"
-
-try:
-    shutil.copytree("/Users/coder/Downloads/cats", "./static/cats", dirs_exist_ok=True)
-finally:
-    cats = "./static/cats"
+cats = "./static/cats"
 
 
 @app.route("/")
@@ -31,11 +27,6 @@ def home():
 
 @app.route("/gallery/<path:filename>")
 def serve(filename):
-    # path = os.path.join(request.args.get("path"), filename)
-    # print(request.args.get("path") + " " + path + " Not found.")
-    # if not os.path.exists(path):
-    #     return request.args.get("path") + " " + path + " Not found."
-    # return send_from_directory("static", path)
     return send_from_directory(
         "static", os.path.join(request.args.get("path"), filename)
     )
