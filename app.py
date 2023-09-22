@@ -1,6 +1,5 @@
 from flask import Flask, render_template, send_from_directory, request
 from markupsafe import escape
-
 import os, shutil
 
 config = {
@@ -47,6 +46,7 @@ def gallery():
             for f in os.listdir(cats)
             if os.path.isfile(os.path.join(cats, f))
         ]
+    images = list(filter(lambda x: x[1] in "pnggifjpgjpegwebp"))
     return render_template("gallery.html", images=images)
 
 
