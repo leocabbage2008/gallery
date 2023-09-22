@@ -17,10 +17,10 @@ app = Flask(__name__)
 # make a sorting algo
 
 
-try:
-    shutil.copytree("/Users/coder/saves", "./static/saves", dirs_exist_ok=True)
-except:
-    print("on virty pullin up with a hundre fitty")
+# try:
+#     shutil.copytree("/Users/coder/saves", "./static/saves", dirs_exist_ok=True)
+# except:
+#     print("on virty pullin up with a hundre fitty")
 saves = "./static/saves"
 cats = "./static/cats"
 
