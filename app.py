@@ -9,10 +9,18 @@ config = {
 }
 app = Flask(__name__)
 
-# try:
-#     shutil.copytree("/Users/coder/saves", "./static/saves", dirs_exist_ok=True)
-# except:
-#     print("on virty pullin up with a hundre fitty")
+# cache user options
+# make right click copy optional
+# make left click download optional
+# figure out issue on azure where mp4's dont work well
+# make some type of searching algo
+# make a sorting algo
+
+
+try:
+    shutil.copytree("/Users/coder/saves", "./static/saves", dirs_exist_ok=True)
+except:
+    print("on virty pullin up with a hundre fitty")
 saves = "./static/saves"
 cats = "./static/cats"
 
@@ -46,7 +54,7 @@ def gallery():
             for f in os.listdir(cats)
             if os.path.isfile(os.path.join(cats, f))
         ]
-    images = list(filter(lambda x: x[1] in "pnggifjpgjpegwebp"))
+    images = [x for x in images if x[1] in "pnggifjpgjpegwebp"]
     return render_template("gallery.html", images=images)
 
 

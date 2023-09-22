@@ -3,30 +3,6 @@
   <head>
     <title>Image Gallery</title>
     <link rel="stylesheet" href="/static/css/gallery.css" />
-    <!-- right click copy. no setinterval because copy at full res no matter what. -->
-    <script>
-      document.addEventListener('DOMContentLoaded', () => {
-        const images = document.querySelectorAll('img');
-        images.forEach((image) => {
-          image.addEventListener('contextmenu', (e) => {
-            const canvas = document.createElement('canvas');
-            const ctx = canvas.getContext('2d');
-            let img = new Image();
-            img.src = image.src;
-            img.width = image.naturalWidth;
-            img.height = image.naturalHeight;
-            canvas.width = img.width;
-            canvas.height = img.height;
-            ctx.drawImage(img, 0, 0);
-            canvas.toBlob((b) => {
-              const item = new ClipboardItem({ 'image/png': b });
-              navigator.clipboard.write([item]);
-            }, 'image/png');
-            e.preventDefault();
-          });
-        });
-      });
-    </script>
     <!-- align self center -->
     <script>
       document.addEventListener('DOMContentLoaded', () => {
@@ -167,6 +143,7 @@
       });
     </script>
     <!-- lazy images -->
+    <!-- right click copy. no setinterval because copy at full res no matter what. -->
     <script>
       document.addEventListener('DOMContentLoaded', function () {
         const lazyImages = document.querySelectorAll('.lazy');
@@ -177,6 +154,22 @@
               img.src = img.getAttribute('data-src');
               img.classList.remove('lazy');
               observer.unobserve(img);
+              img.addEventListener('contextmenu', (e) => {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                let i = new Image();
+                i.src = img.src;
+                i.width = img.naturalWidth;
+                i.height = img.naturalHeight;
+                canvas.width = i.width;
+                canvas.height = i.height;
+                ctx.drawImage(i, 0, 0);
+                canvas.toBlob((b) => {
+                  const item = new ClipboardItem({ 'image/png': b });
+                  navigator.clipboard.write([item]);
+                }, 'image/png');
+                e.preventDefault();
+              });
             }
           });
         });
@@ -187,6 +180,7 @@
       });
     </script>
   </head>
+
   <body>
     <h1>Image Gallery(left click to download, right to copy, scrollable)</h1>
     <div class="row">
@@ -232,5 +226,7 @@
         ></video>
         {%endif%}
       </div>
+      {%endfor%}
+    </div>
   </body>
 </html>
