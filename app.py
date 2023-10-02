@@ -1,12 +1,16 @@
-from flask import Flask, render_template, send_from_directory, request
+from flask import (
+    Flask,
+    render_template,
+    send_from_directory,
+    request,
+    redirect,
+    url_for,
+)
 from markupsafe import escape
+from pathlib import Path
+import random as r
 import os, shutil
 
-config = {
-    "DEBUG": True,
-    "CACHE_TYPE": "SimpleCache",
-    "CACHE_DEFAULT_TIMEOUT": 300,
-}
 app = Flask(__name__)
 
 # cache user options
@@ -23,6 +27,7 @@ app = Flask(__name__)
 #     print("on virty pullin up with a hundre fitty")
 saves = "./static/saves"
 cats = "./static/cats"
+images = []
 
 
 @app.route("/")
@@ -37,16 +42,30 @@ def serve(filename):
     )
 
 
+@app.route("/random")
+def random():
+    images = [f for f in os.listdir(saves) if f.split(".")[-1] in "pnggifjpgjpegwebp"]
+    i = r.choice(images)
+    return send_from_directory("static", os.path.join("./saves", i))
+
+
+@app.route("/randow")
+def randow():
+    videos = [f for f in os.listdir(saves) if f.split(".")[-1] in "webmmp4"]
+    x = r.choice(videos)
+    return send_from_directory("static", os.path.join("./saves", x))
+
+
 @app.route("/gallery")
-# @cache.cached(timeout=300)
 def gallery():
     password = request.args.get("password")
-    print(password)
     if password == "pjoqfjopehnklewjjop56348890":
         images = [
-            (f, f.split(".")[1], "./saves")
-            for f in os.listdir(saves)
-            if os.path.isfile(os.path.join(saves, f))
+            (str(f).split(r"/")[-1], str(f).split(r"/")[-1].split(".")[1], "./saves")
+            for f in sorted(
+                [x for x in Path(saves).iterdir() if not x.is_dir()],
+                key=os.path.getmtime,
+            )
         ]
     else:
         images = [
