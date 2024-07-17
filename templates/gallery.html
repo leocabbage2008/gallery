@@ -23,6 +23,7 @@
       });
     </script>
     <!-- auto peek and dynamics -->
+    <!-- auto peek is a function that triggers peek when columns are more than 7 -->
     <!-- on slider change, will update columns and will check if auto peek is needed -->
     <!-- update is triggered by slider changes and can also be triggered by clicking auto peek auto states -->
     <!-- auto state will update so that update can clean up hovered elements -->
@@ -33,7 +34,6 @@
       document.addEventListener('DOMContentLoaded', () => {
         let mediaGrid = document.getElementsByClassName('media-grid')[0];
         let mediaContainer = document.getElementsByClassName('media-container');
-        let peek = document.getElementById('peek');
         let autoPeek = document.getElementById('auto-peek');
         let slider = document.getElementById('slider');
         let counter = document.getElementById('counter');
@@ -97,6 +97,7 @@
           document.onmousemove = (e) => {
             mouser = document.elementFromPoint(e.clientX, e.clientY);
             if (
+              document.getElementById('peek').checked &&
               (mouser.nodeName == 'IMG' || mouser.nodeName == 'VIDEO') &&
               !forcestop
             ) {
@@ -136,6 +137,9 @@
         });
         counter.addEventListener('input', () => {
           slider.value = counter.value;
+          update();
+        });
+        autoPeek.addEventListener('input', () => {
           update();
         });
         handleState();
@@ -182,51 +186,54 @@
   </head>
 
   <body>
-    <h1>Image Gallery(left click to download, right to copy, scrollable)</h1>
+    <h1>
+      Image Gallery (left click to download, right click to copy, scrollable)
+    </h1>
+    <h2>
+      auto state will activate the state(peeking) when grid reaches more than 7.
+      otherwise peeking will not be enabled
+    </h2>
     <div class="row">
       <div class="grid">
         <h3 class="hr">Grid:</h3>
-        dynamic:<input id="checkbox" type="checkbox" checked />
+        Dynamic: <input id="checkbox" type="checkbox" checked />
         <br />
         <input id="slider" type="range" min="1" max="20" value="3" />
         <input id="counter" type="number" min="1" max="20" value="3" />
       </div>
       <div class="grid">
         <h3 class="hr">Align-self:</h3>
-        .media-grid .media-container:<input id="align-self" type="checkbox" />
+        .media-grid .media-container: <input id="align-self" type="checkbox" />
         <br />
       </div>
       <div class="grid">
         <h3 class="hr">Hover Peek:</h3>
-        Auto State:<input id="auto-peek" type="checkbox" checked /> <br />
-        State:<input id="peek" type="checkbox" />
+        Auto State: <input id="auto-peek" type="checkbox" checked />
+        <br />
+        State: <input id="peek" type="checkbox" />
         <br />
       </div>
     </div>
     <div class="media-grid">
-      {% for (image,type,path) in images %}
+      {% for (image, type, path) in images %}
       <div class="media-container">
-        <div class="title">{{image}}</div>
-        {%if type in 'pnggifjpgjpegwebp' %}
-        <a
-          href="{{url_for('serve', filename=image, path=path)}}"
-          onclick="e.preventDefault()"
-          download
-        >
+        <div class="title">{{ image }}</div>
+        {% if type in 'pnggifjpgjpegwebp' %}
+        <a href="{{ url_for('serve', filename=image, path=path) }}" download>
           <img
             class="lazy"
             data-src="{{ url_for('serve', filename=image, path=path) }}"
           />
         </a>
-        {%else%}
+        {% else %}
         <video
           class="lazy"
           data-src="{{ url_for('serve', filename=image, path=path) }}"
           controls
         ></video>
-        {%endif%}
+        {% endif %}
       </div>
-      {%endfor%}
+      {% endfor %}
     </div>
   </body>
 </html>

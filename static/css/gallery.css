@@ -69,7 +69,6 @@ body::-webkit-scrollbar {
   text-align: center;
   background-color: black;
   color: white;
-  overflow: scroll;
   border-bottom: solid 3px grey;
 }
 
